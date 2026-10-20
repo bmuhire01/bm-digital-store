@@ -1,0 +1,410 @@
+/* BM Digital Store - Admin Panel styles
+   (separate from the shop, the admin looks like a real dashboard) */
+
+:root {
+    --side:      #111827;
+    --side-soft: #1f2937;
+    --side-text: #9ca3af;
+    --brand:     #f97316;
+    --green:     #16a34a;
+    --blue:      #2563eb;
+    --red:       #dc2626;
+    --amber:     #d97706;
+    --bg:        #f1f3f6;
+    --line:      #e5e7eb;
+    --ink:       #111827;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+}
+
+/* ---------- Layout ---------- */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-content {
+    padding: 24px 28px 40px;
+    flex: 1;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    width: 245px;
+    background: var(--side);
+    color: var(--side-text);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.side-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 18px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.side-brand .logo-mark {
+    background: var(--brand);
+    color: #fff;
+    font-weight: bold;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.side-brand strong { color: #fff; display: block; font-size: 15px; }
+.side-brand small { color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+
+.side-nav { padding: 14px 10px; flex: 1; }
+
+.side-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--side-text);
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.side-nav a:hover { background: var(--side-soft); color: #fff; }
+
+.side-nav a.active {
+    background: var(--brand);
+    color: #fff;
+    font-weight: bold;
+}
+
+.side-nav .side-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4b5563;
+    padding: 16px 12px 6px;
+}
+
+.side-user {
+    border-top: 1px solid #1f2937;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--side-soft);
+    color: var(--brand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.side-user strong { color: #fff; display: block; font-size: 13px; }
+.side-user small { color: #6b7280; font-size: 11px; }
+
+/* ---------- Top bar ---------- */
+.admin-top {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-top h1 { margin: 0; font-size: 20px; }
+
+.top-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.top-chip b { color: var(--ink); }
+
+/* ---------- Stat cards ---------- */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.stat {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.stat-icon.orange { background: #fff1e6; color: var(--brand); }
+.stat-icon.green  { background: #e8f7ee; color: var(--green); }
+.stat-icon.blue   { background: #e6efff; color: var(--blue); }
+.stat-icon.red    { background: #fdeaea; color: var(--red); }
+.stat-icon.amber  { background: #fdf3e3; color: var(--amber); }
+
+.stat small { color: #6b7280; font-size: 12px; display: block; }
+.stat b { font-size: 20px; }
+.stat .trend { font-size: 11px; color: var(--green); }
+.stat .trend.down { color: var(--red); }
+
+/* ---------- Panels ---------- */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.panel-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-head h2 { margin: 0; font-size: 15px; }
+.panel-head a { font-size: 12px; color: var(--brand); text-decoration: none; }
+.panel-body { padding: 16px 18px; }
+
+/* ---------- Bar chart (pure CSS) ---------- */
+.chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 190px;
+    padding-top: 10px;
+}
+
+.chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.chart-bar {
+    width: 100%;
+    background: linear-gradient(180deg, var(--brand), #fb923c);
+    border-radius: 5px 5px 0 0;
+    min-height: 3px;
+    position: relative;
+}
+
+.chart-bar span {
+    position: absolute;
+    top: -19px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 11px;
+    color: #374151;
+}
+
+.chart-col label {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 7px;
+}
+
+/* ---------- Tables ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    font-size: 13px;
+}
+
+th {
+    background: #f9fafb;
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+tr:last-child td { border-bottom: none; }
+
+tbody tr:hover { background: #fafbfc; }
+
+.table-wrap { overflow-x: auto; }
+
+/* ---------- Badges ---------- */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.badge.pending   { background: #fef3c7; color: #92400e; }
+.badge.shipped   { background: #dbeafe; color: #1d4ed8; }
+.badge.delivered { background: #dcfce7; color: #166534; }
+.badge.cancelled { background: #fee2e2; color: #991b1b; }
+.badge.admin     { background: #ede9fe; color: #5b21b6; }
+.badge.customer  { background: #e0f2fe; color: #075985; }
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.btn:hover { background: #ea580c; }
+
+.btn.green { background: var(--green); }
+.btn.blue  { background: var(--blue); }
+.btn.red   { background: var(--red); }
+.btn.gray  { background: #6b7280; }
+.btn.sm    { padding: 5px 11px; font-size: 12px; }
+
+/* ---------- Forms ---------- */
+input[type=text], input[type=email], input[type=password],
+input[type=number], input[type=file], textarea, select {
+    width: 100%;
+    padding: 9px 11px;
+    margin-bottom: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+}
+
+.hint { font-size: 12px; color: #6b7280; margin: -8px 0 14px; }
+
+.preview {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    background: #f9fafb;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 0 0 18px;
+}
+
+/* ---------- Alerts ---------- */
+.alert {
+    padding: 11px 15px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.alert.ok   { background: #dcfce7; border: 1px solid #86efac; color: #14532d; }
+.alert.bad  { background: #fee2e2; border: 1px solid #fca5a5; color: #7f1d1d; }
+.alert.info { background: #dbeafe; border: 1px solid #93c5fd; color: #1e3a8a; }
+
+/* ---------- Misc ---------- */
+.empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.muted { color: #6b7280; font-size: 12px; }
+
+.product-cell { display: flex; align-items: center; gap: 10px; }
+
+.product-cell img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+}
+
+.product-cell b { display: block; font-size: 13px; }
+.product-cell small { color: #6b7280; font-size: 11px; }
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.toolbar form { display: flex; gap: 8px; }
+.toolbar input { width: 220px; margin-bottom: 0; }

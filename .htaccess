@@ -1,0 +1,25 @@
+# BM Digital Store
+
+# Do not show a list of the files when a folder is opened
+Options -Indexes
+
+# Set the default page
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Nice links without the .php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ $1.php [L]
+</IfModule>
+
+# When the site is live and has a certificate, turn this on to force HTTPS.
+# (Leave it off while you work on http://localhost, otherwise nothing will load.)
+#
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTPS} off
+#     RewriteCond %{HTTP:X-Forwarded-Proto} !https
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>

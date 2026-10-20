@@ -1,0 +1,35 @@
+# Never run PHP files that were uploaded as a product picture.
+# Without this, someone could upload a PHP "shell" and run it on the server.
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# RemoveHandler / RemoveType make sure the files are never executed
+<IfModule mod_mime.c>
+    RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
+    RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
+</IfModule>
+
+# Only pictures are allowed to be served from here
+<FilesMatch "\.(?i:jpe?g|png|gif|webp|svg)$">
+    Require all granted
+</FilesMatch>
+
+<FilesMatch "\.(?i:php|phtml|php3|php4|php5|php7|php8|phps|cgi|pl|py|sh|exe)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

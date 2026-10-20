@@ -1,0 +1,4 @@
+I'm a student learning PHP + MySQL step by step.
+- Use procedural PHP with mysqli_* functions (no OOP)
+- Keep code simple, short comments on each part
+- Explain briefly, one line per change

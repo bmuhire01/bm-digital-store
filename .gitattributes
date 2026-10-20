@@ -1,0 +1,14 @@
+# Keep the line endings the same everywhere (LF), so the code behaves
+# the same on your Windows computer and on the Linux server.
+
+* text=auto eol=lf
+
+# Pictures are not text
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary

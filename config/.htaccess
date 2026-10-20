@@ -1,0 +1,11 @@
+# Do not let anyone read this folder from the browser.
+# The database password lives in here.
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

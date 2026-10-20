@@ -1,0 +1,18 @@
+# Uploaded product pictures (the ready-made ones stay in the repo)
+assets/uploads/product_*
+
+# Your own database credentials - never push these
+config/credentials.php
+
+# Screenshots and notes
+*.local.md
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Logs and system files
+*.log
+Thumbs.db
+.DS_Store
