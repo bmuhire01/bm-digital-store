@@ -5,28 +5,9 @@
       "runtime": "vercel-php@0.9.0"
     }
   },
-  "rewrites": [
-    { "source": "/",                       "destination": "/api/index.php?page=index" },
-    { "source": "/index.php",              "destination": "/api/index.php?page=index" },
-    { "source": "/product.php",            "destination": "/api/index.php?page=product" },
-    { "source": "/cart.php",               "destination": "/api/index.php?page=cart" },
-    { "source": "/checkout.php",           "destination": "/api/index.php?page=checkout" },
-    { "source": "/order.php",              "destination": "/api/index.php?page=order" },
-    { "source": "/orders.php",             "destination": "/api/index.php?page=orders" },
-    { "source": "/login.php",              "destination": "/api/index.php?page=login" },
-    { "source": "/register.php",           "destination": "/api/index.php?page=register" },
-    { "source": "/logout.php",             "destination": "/api/index.php?page=logout" },
-    { "source": "/cancel_order.php",       "destination": "/api/index.php?page=cancel_order" },
-    { "source": "/image.php",              "destination": "/api/index.php?page=image" },
-
-    { "source": "/admin",                  "destination": "/api/index.php?page=admin/index" },
-    { "source": "/admin/index.php",        "destination": "/api/index.php?page=admin/index" },
-    { "source": "/admin/products.php",     "destination": "/api/index.php?page=admin/products" },
-    { "source": "/admin/orders.php",       "destination": "/api/index.php?page=admin/orders" },
-    { "source": "/admin/customers.php",    "destination": "/api/index.php?page=admin/customers" },
-    { "source": "/admin/add_product.php",  "destination": "/api/index.php?page=admin/add_product" },
-    { "source": "/admin/edit_product.php", "destination": "/api/index.php?page=admin/edit_product" },
-    { "source": "/admin/delete_product.php", "destination": "/api/index.php?page=admin/delete_product" },
-    { "source": "/admin/update_status.php", "destination": "/api/index.php?page=admin/update_status" }
+  "routes": [
+    { "src": "/(.*)\\.php", "dest": "/api/index.php?page=$1" },
+    { "src": "/", "dest": "/api/index.php?page=index" },
+    { "src": "/admin", "dest": "/api/index.php?page=admin/index" }
   ]
 }

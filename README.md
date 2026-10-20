@@ -85,9 +85,12 @@ project1/
 ├── bin/
 │   └── setup.php        # creates the tables the first time the app starts
 ├── docker/
+│   ├── Dockerfile       # for Railway and other Docker hosts
 │   └── start.sh         # what the container runs
-├── Dockerfile           # for Railway and other Docker hosts
 ├── railway.json         # the Railway settings
+├── api/
+│   └── index.php        # the front controller for Vercel
+├── vercel.json          # the Vercel settings
 ├── includes/
 │   ├── header.php       # top of every page (menu, logo)
 │   └── footer.php       # bottom of every page
@@ -180,11 +183,11 @@ There are three ways. Nothing secret is in the repository, so any of them works.
 
 ### Option 1 - Railway (recommended, same feel as Vercel)
 
-Push to GitHub and the site is live. Railway builds the `Dockerfile` in this
+Push to GitHub and the site is live. Railway builds the `docker/Dockerfile` in this
 project and runs the app in a container, with MySQL next to it.
 
 1. Go to **railway.app** -> **New Project** -> **Deploy from GitHub Repo** ->
-   pick `bm-digital-store`. Railway sees the `Dockerfile` and starts building.
+   pick `bm-digital-store`. Railway sees the Dockerfile and starts building.
 2. Add the database: on the project, click **+ New** -> **Database** -> **MySQL**.
    Railway then links it to your app automatically and puts the connection in
    the `DATABASE_URL` variable.
@@ -241,20 +244,50 @@ Right click `assets/uploads` -> Properties -> Permissions -> `755` (or `775`).
 Uncomment the HTTPS block at the bottom of `.htaccess` once the site has a
 certificate.
 
-### Option 3 - Vercel (why we did not use it)
+### Option 3 - Vercel (needs a free MySQL)
 
-Vercel can run PHP (the `vercel-php` runtime), but it is not a good fit for this
-shop:
+Vercel runs the app with the community PHP runtime. Because Vercel has no
+database of its own and the files on the server are not kept, two things are
+needed:
 
-| What we need | Vercel |
+| What we need | Vercel reality | What we do |
+|---|---|---|
+| `$_SESSION` for the cart and the login | Functions are stateless | `config/session_db.php` keeps the sessions in the database |
+| Saved product pictures | The filesystem is read only | The pictures go into the database, `image.php` gives them out |
+| MySQL | Vercel has none | A free one from Aiven |
+
+**1. Make a free MySQL database**
+
+1. Sign up at **aiven.io** (no credit card, the free plan has no time limit)
+2. **Create service** -> **MySQL** -> plan **Free**
+3. On the **Overview** page open **Service settings** -> **General** and note the
+   **Service URI**. It looks like this:
+   ```
+   mysql://avnadmin:YOUR_PASSWORD@mysql-xxxx.aivencloud.com:12345/defaultdb
+   ```
+
+**2. Push the code and deploy**
+
+The repository already has everything Vercel needs (`vercel.json`, `api/index.php`).
+Import it at **vercel.com/new** -> pick `bm-digital-store` -> **Deploy**.
+
+**3. Add the environment variables**
+
+In the Vercel project: **Settings -> Environment Variables** and add:
+
+| Name | Value |
 |---|---|
-| `$_SESSION` for the cart and the login | Functions are stateless - sessions need Redis |
-| Saved product pictures | The filesystem is read only - needs blob storage |
-| MySQL | Vercel has no MySQL - needs an external database |
+| `DATABASE_URL` | the service URI from Aiven (mark it as **Secret**) |
+| `SESSION_DRIVER` | `db` |
+| `IMAGE_DRIVER` | `db` |
 
-So Vercel would mean rewriting the sessions, the uploads and adding two paid
-services. Railway gives the same "push to Git, get a URL" experience and the
-code stays as it is.
+**4. Done**
+
+Every push to `main` deploys again. The tables are made the first time somebody
+opens the site.
+
+> The free Aiven service can power off after a long time without visitors. It
+> wakes up again by itself, the first request just takes a little longer.
 
 ### Before you go live
 
