@@ -167,6 +167,66 @@ order_items -> the product lines inside one order
 - When a product is deleted, its uploaded picture is removed - but only when no other
   product uses that picture.
 
+## Putting it online later
+
+The project is ready to be hosted. Nothing secret is in the repository.
+
+**1. Copy the code to the server**
+
+Upload the folder through FTP (FileZilla) or clone it from GitHub. Put it in the
+`public_html` folder (that name is normal on shared hosting).
+
+**2. Make the database**
+
+Create a database and a database user in the hosting control panel (phpMyAdmin).
+Import `database.sql` there, or run it in phpMyAdmin -> Import.
+
+**3. Tell the code where the database is**
+
+Copy `config/credentials.example.php` to `config/credentials.php` and fill in
+the details the host gave you:
+
+```php
+<?php
+$host = 'sql123.yourhost.com';   // the host gave you this
+$user = 'your_user';
+$pass = 'your_password';
+$name = 'your_database';
+```
+
+`config/credentials.php` is in `.gitignore`, so your password never goes to GitHub.
+
+(Instead of that file you can also set the environment variables `DB_HOST`,
+`DB_USER`, `DB_PASS` and `DB_NAME` in the hosting panel.)
+
+**4. Make sure the uploads folder can be written to**
+
+Right click `assets/uploads` -> Properties -> Permissions -> `755` (or `775`).
+
+**5. Turn on HTTPS**
+
+Uncomment the HTTPS block at the bottom of `.htaccess` once the site has a
+certificate.
+
+**6. Change the test passwords**
+
+The accounts in `database.sql` use `admin123`. Change them before you go live:
+
+```sql
+UPDATE users SET password = '$2y$10$...' WHERE email = 'admin@shop.com';
+```
+
+The easiest way is to just register again in the admin and use the **forgot
+password** page, or run this in PHP:
+
+```php
+echo password_hash('myNewPassword', PASSWORD_DEFAULT);
+```
+
+**Free hosting to try:** InfinityFree, Hostinger, or a small VPS with
+cPanel + Apache + MySQL. Any of them works because the code is plain PHP and
+MySQL with no extra packages.
+
 ## Next steps (if you want to keep going)
 
 - Discount codes (a `coupons` table + a code field on the checkout form)
