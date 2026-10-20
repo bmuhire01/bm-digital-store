@@ -64,8 +64,34 @@ if (file_exists(__DIR__ . '/credentials.php')) {
     require __DIR__ . '/credentials.php';
 }
 
-$conn = mysqli_connect($host, $user, $pass, $name, $port);
+$conn = @mysqli_connect($host, $user, $pass, $name, $port);
 
 if (!$conn) {
-    die('Database connection failed: ' . mysqli_connect_error($conn));
+    $problem = mysqli_connect_error($conn);
+
+    // Remember it in the log of the server
+    error_log('BM Digital Store - database connection failed: ' . $problem);
+
+    if (!headers_sent()) {
+        header('HTTP/1.1 503 Service Unavailable');
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+
+    // A friendly page instead of a stack trace
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">';
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+    echo '<title>BM Digital Store</title>';
+    echo '<style>body{font-family:Arial,Helvetica,sans-serif;background:#f4f5f7;color:#222;margin:0;';
+    echo 'display:flex;align-items:center;justify-content:center;height:100vh}';
+    echo '.box{background:#fff;padding:35px 40px;border-radius:10px;border:1px solid #e5e7eb;max-width:520px}';
+    echo 'h1{margin:0 0 12px;font-size:22px}span{color:#f97316}p{line-height:1.6;color:#555}';
+    echo 'code{background:#f4f5f7;padding:2px 6px;border-radius:4px;font-size:13px}</style></head><body>';
+    echo '<div class="box"><h1>BM <span>Digital Store</span></h1>';
+    echo '<p>The shop cannot reach its database right now. It is probably not set up yet, ';
+    echo 'or the database is asleep for a moment.</p>';
+    echo '<p>Please try again in a moment.</p>';
+    echo '<p style="font-size:12px;color:#888">The server said:<br><code>' . htmlspecialchars($problem) . '</code></p>';
+    echo '</div></body></html>';
+
+    exit;
 }
