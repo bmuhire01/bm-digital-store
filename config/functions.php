@@ -65,8 +65,30 @@ function price($amount)
 function start_session()
 {
     if (session_status() === PHP_SESSION_NONE) {
+        // On a serverless host the sessions have to live in the database
+        if (sessions_in_database()) {
+            require_once __DIR__ . '/session_db.php';
+            use_database_sessions();
+        }
+
         session_start();
     }
+}
+
+// Do the sessions have to be kept in the database?
+// Yes on Vercel and other serverless hosts, no on a normal server.
+function sessions_in_database()
+{
+    if (app_setting('session_driver') === 'db') {
+        return true;
+    }
+
+    // Vercel tells us it is running us
+    if (getenv('VERCEL')) {
+        return true;
+    }
+
+    return false;
 }
 
 // Is the current visitor logged in?
@@ -149,10 +171,31 @@ function cart_count()
 // Where the product pictures are stored
 define('IMAGE_FOLDER', __DIR__ . '/../assets/uploads/');
 
+// Have the pictures to be kept in the database?
+// Yes on Vercel and other serverless hosts (the filesystem there is read only),
+// no on a normal server where a plain file works fine.
+function images_in_database()
+{
+    if (app_setting('image_driver') === 'db') {
+        return true;
+    }
+
+    if (getenv('VERCEL')) {
+        return true;
+    }
+
+    return false;
+}
+
 // The picture of a product, with a fallback when the file is missing
 function product_image($filename)
 {
     $filename = (string) $filename;
+
+    // A picture that lives in the database
+    if (strpos($filename, 'db:') === 0) {
+        return 'image.php?id=' . (int) substr($filename, 3);
+    }
 
     if ($filename !== '' && file_exists(IMAGE_FOLDER . $filename)) {
         return 'assets/uploads/' . $filename;
@@ -190,6 +233,11 @@ function save_uploaded_image($file, $old_name = '')
     // Build a name that nobody else is using
     $new_name = 'product_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
 
+    // On a serverless host the picture has to go into the database
+    if (images_in_database()) {
+        return save_image_in_database($file, $new_name);
+    }
+
     // Move the file from the temporary folder into assets/uploads
     if (!move_uploaded_file($file['tmp_name'], IMAGE_FOLDER . $new_name)) {
         return false;
@@ -198,10 +246,49 @@ function save_uploaded_image($file, $old_name = '')
     return $new_name;
 }
 
+// Put an uploaded picture into the database and return "db:<id>"
+function save_image_in_database($file, $new_name)
+{
+    global $conn;
+
+    $bytes = file_get_contents($file['tmp_name']);
+
+    if ($bytes === false) {
+        return false;
+    }
+
+    $mime = mime_content_type($file['tmp_name']);
+    if (!$mime) {
+        $mime = 'application/octet-stream';
+    }
+
+    $safe_name  = mysqli_real_escape_string($conn, $new_name);
+    $safe_mime  = mysqli_real_escape_string($conn, $mime);
+    $safe_bytes = mysqli_real_escape_string($conn, $bytes);
+
+    mysqli_query($conn, "INSERT INTO product_images (filename, mime, data, size)
+                          VALUES ('$safe_name', '$safe_mime', '$safe_bytes', " . (int) $file['size'] . ")");
+
+    if (mysqli_error($conn)) {
+        return false;
+    }
+
+    return 'db:' . mysqli_insert_id($conn);
+}
+
 // Delete a picture file (but never the placeholder)
 function delete_image_file($filename)
 {
+    global $conn;
+
     if ($filename === '' || $filename === 'placeholder.svg') {
+        return;
+    }
+
+    // A picture in the database
+    if (strpos($filename, 'db:') === 0) {
+        $id = (int) substr($filename, 3);
+        mysqli_query($conn, "DELETE FROM product_images WHERE id = " . $id);
         return;
     }
 
@@ -218,7 +305,17 @@ function delete_image_if_unused($filename)
 {
     global $conn;
 
-    if ($filename === '' || strpos($filename, 'product_') !== 0) {
+    if ($filename === '') {
+        return;
+    }
+
+    // A picture in the database is only used by one product
+    if (strpos($filename, 'db:') === 0) {
+        delete_image_file($filename);
+        return;
+    }
+
+    if (strpos($filename, 'product_') !== 0) {
         return;
     }
 

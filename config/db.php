@@ -7,6 +7,8 @@
 //   3. DB_HOST / DB_USER / DB_PASS / DB_NAME (environment variables)
 //   4. the defaults below     (XAMPP on your own computer)
 
+require_once __DIR__ . '/config.php';
+
 // The defaults for XAMPP
 $host = 'localhost';
 $user = 'root';

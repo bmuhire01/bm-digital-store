@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS product_images;
 
 -- Users who can log in
 CREATE TABLE users (
@@ -62,6 +64,24 @@ CREATE TABLE order_items (
     price      DECIMAL(10,2) NOT NULL,   -- price at the moment of buying
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- The sessions, kept here so the cart and the login also work on a host
+-- where the files on the server are not kept (like Vercel)
+CREATE TABLE sessions (
+    id       VARCHAR(128) NOT NULL PRIMARY KEY,
+    data     TEXT,
+    modified INT NOT NULL
+) ENGINE=InnoDB;
+
+-- The uploaded product pictures, kept here for the same reason
+CREATE TABLE product_images (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    filename   VARCHAR(255) NOT NULL,
+    mime       VARCHAR(50) NOT NULL,
+    data       MEDIUMBLOB NOT NULL,
+    size       INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- Sample data (prices in Rwandan francs)

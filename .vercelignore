@@ -1,0 +1,24 @@
+# Files that are not needed on Vercel
+
+.git
+.gitignore
+.gitattributes
+.github
+Dockerfile
+.dockerignore
+railway.json
+docker
+README.md
+AGENTS.MD.txt
+
+# Your own database credentials
+config/credentials.php
+
+# Uploaded product pictures (the ready-made ones stay)
+assets/uploads/product_*
+
+*.log
+Thumbs.db
+.DS_Store
+.idea
+.vscode
