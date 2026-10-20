@@ -64,11 +64,22 @@ if (file_exists(__DIR__ . '/credentials.php')) {
     require __DIR__ . '/credentials.php';
 }
 
-$conn = @mysqli_connect($host, $user, $pass, $name, $port);
+// In PHP 8.1 and up mysqli throws an exception when it cannot connect,
+// so we catch it here and show a friendly page below.
+$conn    = false;
+$problem = '';
+
+try {
+    $conn = mysqli_connect($host, $user, $pass, $name, $port);
+
+    if (!$conn) {
+        $problem = mysqli_connect_error();
+    }
+} catch (mysqli_sql_exception $e) {
+    $problem = $e->getMessage();
+}
 
 if (!$conn) {
-    $problem = mysqli_connect_error($conn);
-
     // Remember it in the log of the server
     error_log('BM Digital Store - database connection failed: ' . $problem);
 
