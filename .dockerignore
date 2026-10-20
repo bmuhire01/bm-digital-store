@@ -1,0 +1,19 @@
+# Things that should not go into the Docker image
+
+.git
+.gitignore
+.gitattributes
+.github
+
+# Your own database credentials - the image uses the environment variables
+config/credentials.php
+
+# Uploaded product pictures (the ready-made ones stay)
+assets/uploads/product_*
+
+# Local files
+*.log
+Thumbs.db
+.DS_Store
+.idea
+.vscode

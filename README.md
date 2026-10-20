@@ -80,7 +80,14 @@ Change them there and the whole store follows.
 project1/
 ├── config/
 │   ├── db.php           # database connection
-│   └── functions.php    # helper functions (e, get_all, get_row, price, ...)
+│   ├── functions.php    # helper functions (e, get_all, get_row, price, ...)
+│   └── credentials.example.php   # copy to credentials.php and fill in
+├── bin/
+│   └── setup.php        # creates the tables the first time the app starts
+├── docker/
+│   └── start.sh         # what the container runs
+├── Dockerfile           # for Railway and other Docker hosts
+├── railway.json         # the Railway settings
 ├── includes/
 │   ├── header.php       # top of every page (menu, logo)
 │   └── footer.php       # bottom of every page
@@ -167,9 +174,35 @@ order_items -> the product lines inside one order
 - When a product is deleted, its uploaded picture is removed - but only when no other
   product uses that picture.
 
-## Putting it online later
+## Putting it online
 
-The project is ready to be hosted. Nothing secret is in the repository.
+There are three ways. Nothing secret is in the repository, so any of them works.
+
+### Option 1 - Railway (recommended, same feel as Vercel)
+
+Push to GitHub and the site is live. Railway builds the `Dockerfile` in this
+project and runs the app in a container, with MySQL next to it.
+
+1. Go to **railway.app** -> **New Project** -> **Deploy from GitHub Repo** ->
+   pick `bm-digital-store`. Railway sees the `Dockerfile` and starts building.
+2. Add the database: on the project, click **+ New** -> **Database** -> **MySQL**.
+   Railway then links it to your app automatically and puts the connection in
+   the `DATABASE_URL` variable.
+3. Add a **volume** so the product pictures survive a restart:
+   right click the **app service** -> **Volumes** -> **Add Volume** ->
+   Mount Path `/var/www/html/assets/uploads`.
+4. Give it a name: **Settings -> Networking -> Generate Domain**. You get
+   something like `bm-digital-store.up.railway.app`.
+5. Every `git push` to `main` now redeploys the site by itself.
+
+The database tables are created the first time the container starts
+(`bin/setup.php`), so there is nothing to import by hand.
+
+Railway gives a free trial with credit, then the Hobby plan is $5 a month.
+
+### Option 2 - Classic shared hosting (cheapest, nothing to build)
+
+Hostinger, InfinityFree, Namecheap - any host that runs PHP + MySQL.
 
 **1. Copy the code to the server**
 
@@ -208,24 +241,35 @@ Right click `assets/uploads` -> Properties -> Permissions -> `755` (or `775`).
 Uncomment the HTTPS block at the bottom of `.htaccess` once the site has a
 certificate.
 
-**6. Change the test passwords**
+### Option 3 - Vercel (why we did not use it)
 
-The accounts in `database.sql` use `admin123`. Change them before you go live:
+Vercel can run PHP (the `vercel-php` runtime), but it is not a good fit for this
+shop:
+
+| What we need | Vercel |
+|---|---|
+| `$_SESSION` for the cart and the login | Functions are stateless - sessions need Redis |
+| Saved product pictures | The filesystem is read only - needs blob storage |
+| MySQL | Vercel has no MySQL - needs an external database |
+
+So Vercel would mean rewriting the sessions, the uploads and adding two paid
+services. Railway gives the same "push to Git, get a URL" experience and the
+code stays as it is.
+
+### Before you go live
+
+The accounts in `database.sql` use `admin123`. Change them first:
 
 ```sql
 UPDATE users SET password = '$2y$10$...' WHERE email = 'admin@shop.com';
 ```
 
-The easiest way is to just register again in the admin and use the **forgot
-password** page, or run this in PHP:
+The easiest way is to run this in PHP and copy the result:
 
 ```php
 echo password_hash('myNewPassword', PASSWORD_DEFAULT);
 ```
 
-**Free hosting to try:** InfinityFree, Hostinger, or a small VPS with
-cPanel + Apache + MySQL. Any of them works because the code is plain PHP and
-MySQL with no extra packages.
 
 ## Next steps (if you want to keep going)
 

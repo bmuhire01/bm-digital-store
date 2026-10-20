@@ -3,6 +3,10 @@
 
 * text=auto eol=lf
 
+# These must always use LF, a Windows line ending breaks the container
+*.sh      text eol=lf
+Dockerfile text eol=lf
+
 # Pictures are not text
 *.jpg  binary
 *.jpeg binary
