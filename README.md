@@ -246,7 +246,7 @@ certificate.
 
 ### Option 3 - Vercel (this one is live)
 
-**The shop is running: <https://project1-neon-six-67.vercel.app>**
+**The shop is running: <https://bm-digital-store.vercel.app>**
 
 Vercel runs the app with the community PHP runtime. Because Vercel has no
 database of its own and the files on the server are not kept, two things are
