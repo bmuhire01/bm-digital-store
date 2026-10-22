@@ -244,7 +244,9 @@ Right click `assets/uploads` -> Properties -> Permissions -> `755` (or `775`).
 Uncomment the HTTPS block at the bottom of `.htaccess` once the site has a
 certificate.
 
-### Option 3 - Vercel (needs a free MySQL)
+### Option 3 - Vercel (this one is live)
+
+**The shop is running: <https://project1-neon-six-67.vercel.app>**
 
 Vercel runs the app with the community PHP runtime. Because Vercel has no
 database of its own and the files on the server are not kept, two things are
@@ -255,6 +257,7 @@ needed:
 | `$_SESSION` for the cart and the login | Functions are stateless | `config/session_db.php` keeps the sessions in the database |
 | Saved product pictures | The filesystem is read only | The pictures go into the database, `image.php` gives them out |
 | MySQL | Vercel has none | A free one from Aiven |
+| A redirect after a form | The output was not buffered | `output_buffering` in `api/php.ini` |
 
 **1. Make a free MySQL database**
 
@@ -281,13 +284,33 @@ In the Vercel project: **Settings -> Environment Variables** and add:
 | `SESSION_DRIVER` | `db` |
 | `IMAGE_DRIVER` | `db` |
 
-**4. Done**
+**4. Turn the login wall off**
+
+By default Vercel asks you to log in before anyone can see the site. That is
+good for a private project but not for a shop. Go to **Settings -> Deployment
+Protection** and set it to **Disabled** (or use a password if you want to keep
+the site private while you work on it).
+
+**5. Done**
 
 Every push to `main` deploys again. The tables are made the first time somebody
 opens the site.
 
 > The free Aiven service can power off after a long time without visitors. It
 > wakes up again by itself, the first request just takes a little longer.
+
+#### Two things that are easy to get wrong on Vercel
+
+**A php.ini only understands `;` for comments.** A `#` comment with brackets in
+it (`# like this (one)`) breaks the whole file, and then even
+`display_errors = Off` does not work - you see the PHP warnings in the browser.
+Always write `;` at the start of a comment.
+
+**The output has to be buffered.** A redirect after a form is sent with a
+header, and a header can only be sent while nothing has been printed yet.
+`output_buffering = 4096` in `api/php.ini` fixes that (XAMPP has it on by
+default, which is why it only showed up on Vercel).
+
 
 ### Before you go live
 
