@@ -18,3 +18,7 @@ Thumbs.db
 .DS_Store
 
 .vercel
+
+# Environment files (may contain the live database password)
+.env*
+!.env.example
