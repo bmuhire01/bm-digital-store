@@ -76,19 +76,48 @@ function session_gc_db($max_lifetime)
 
     mysqli_query($conn, "DELETE FROM sessions WHERE modified < " . (time() - $max_lifetime));
 
-    return true;
+    // How many were removed (the interface wants a number here)
+    return mysqli_affected_rows($conn);
+}
+
+// PHP 8.4 and up want an object for the session handler.
+// This class is only a thin wrapper: the work is done by the functions
+// above, so the rest of the project stays procedural.
+class DbSessionHandler implements SessionHandlerInterface
+{
+    public function open($path, $name)
+    {
+        return session_open_db($path, $name);
+    }
+
+    public function close()
+    {
+        return session_close_db();
+    }
+
+    public function read($id)
+    {
+        return session_read_db($id);
+    }
+
+    public function write($id, $data)
+    {
+        return session_write_db($id, $data);
+    }
+
+    public function destroy($id)
+    {
+        return session_destroy_db($id);
+    }
+
+    public function gc($max_lifetime)
+    {
+        return session_gc_db($max_lifetime);
+    }
 }
 
 // Turn the database session handler on
 function use_database_sessions()
 {
-    // The order matters: open, close, read, write, destroy, gc
-    session_set_save_handler(
-        'session_open_db',
-        'session_close_db',
-        'session_read_db',
-        'session_write_db',
-        'session_destroy_db',
-        'session_gc_db'
-    );
+    session_set_save_handler(new DbSessionHandler());
 }
